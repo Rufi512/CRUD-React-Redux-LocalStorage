@@ -1,5 +1,5 @@
 # CRUD-React-Redux-LocalStorage
-<img src="https://github.com/Rufi512/CRUD-React-Redux-LocalStorage/blob/main/Capture.jpg" alt="Capture.jpg">
+<img src="https://github.com/Rufi512/CRUD-React-Redux-LocalStorage/blob/main/Capture.png" alt="Capture.png">
 
 # Getting Started with Create React App
 

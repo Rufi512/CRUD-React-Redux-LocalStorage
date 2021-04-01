@@ -1,82 +1,86 @@
-import React,{useState} from 'react'
-import EditTask from './EditTask'
-import {showOptions,showEditTask} from './functions'
-import {connect} from 'react-redux'
+import React from "react";
+import { connect } from "react-redux";
 
-const Tasks = ({tasks,edit,remove}) =>{
+const Tasks = ({ tasks, setEdit, remove }) => {
 
-const [iTask,setITask] = useState({})
+  if (tasks.length === 0) {
+    return (
+      <div className="tasks" style={{height:'100vh'}}>
+        <h1>Tasks List</h1>
+        <p style={{margin:'auto'}}>You have no task on the list! </p>
+      </div>
+    );
+  }
 
-const [index,setIndex] = useState({})
+  return (
+    <div className="tasks">
+      <h1 style={{ marginBottom: "0" }}>Tasks List</h1>
 
-const setValuesToEdit = (task,i) =>{
-setITask(task)
-setIndex(i)
-showEditTask('true')
-}
+      <div className="tasks-container">
+        {tasks.map((task, i) => {
+          return (
+            <div className="task" key={i}>
+              <div className="options">
+                <i
+                  onClick={(e) => {
+                    setEdit(task, i);
+                  }}
+                  className="fas fa-edit"
+                ></i>
+                <i
+                  onClick={(e) => {
+                    remove(i);
+                    setEdit(null);
+                  }}
+                  className="fas fa-trash"
+                ></i>
+              </div>
 
-	return(
-            <div className="tasks">
-            <h1>Task List</h1>
-            <div className="tasks-container">
-               
-
-            {
-            	tasks.map((task,i)=>{
-
-            		return(
-            			<React.Fragment key={i}>
-            			<div className="task">
-            		<h3>{task.name}</h3>
-            		<p>{task.description}</p>
-                <div className="task-footer">
-            		<div><i className="fas fa-exclamation-circle"></i><p>{task.priority}</p></div>
-            		<div><i className="fas fa-clock"></i> <p>{task.date}</p></div>
+              <h3>{task.name}</h3>
+              <p style={{ wordBreak: "break-word" }}>{task.description}</p>
+              <div className="task-footer">
+                <div>
+                  <i
+                    className="fas fa-exclamation-circle"
+                    style={{ marginRight: "5px" }}
+                  ></i>
+                  <p>{task.priority}</p>
                 </div>
-            		<div className="more">
-                 <i onClick={(e)=>showOptions(e.target.dataset.id)} className="fas fa-ellipsis-h" data-id={task.id}></i>
-                 <span className="tooltip">Options</span>
+                <div>
+                  <i
+                    className="fas fa-clock"
+                    style={{ marginRight: "5px" }}
+                  ></i>{" "}
+                  <p>{task.date}</p>
                 </div>
-            		<div className="options" data-id={task.id}> 
-                <div onClick={()=>remove(task.id)}><i className="fas fa-trash"></i> <p>Delete Task</p></div>
-                <div onClick={()=>setValuesToEdit(task,i)}><i className="fas fa-edit"></i> <p>Edit Task</p></div>
-            		</div>
-
-                </div>
-            		</React.Fragment>
-            		)
-            	})
-            }
-</div>
-
-<EditTask task={iTask} arr={index}/>
+              </div>
             </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
-		)
-}
+const mapStateToProps = (state) => ({
+  tasks: state.tasks,
+});
 
+const mapDispatchToProps = (dispatch) => ({
+  setEdit(task, index) {
+    dispatch({
+      type: "SET_EDIT_TASK",
+      task,
+      index,
+    });
+  },
 
-const mapStateToProps = state =>({ 
-   tasks:state.tasks
-	})
+  remove(index) {
+    dispatch({
+      type: "DELETE_TASK",
+      index,
+    });
+  },
+});
 
-const mapDispatchToProps = dispatch =>({
-
-       edit(id){
-        dispatch({
-              type:'EDIT_TASK',
-              id
-            })
-       },
-          
-          remove(id){
-            showOptions(id,'delete')
-          	dispatch({
-          		type:'DELETE_TASK',
-          		id
-          	})
-          }
-
-})
-
-export default connect(mapStateToProps,mapDispatchToProps) (Tasks)
+export default connect(mapStateToProps, mapDispatchToProps)(Tasks);
