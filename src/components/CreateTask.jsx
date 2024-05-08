@@ -1,25 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
+import AddIcon from "./icons/Add";
+import CloseIcon from "./icons/Close";
 
 const CreateTasks = ({ sendForm, setEdit, edit, taskEdit }) => {
-  var onMobile = false;
   const inputName = useRef(null);
-  const taskBefore = useRef(null);
-  const taskCreate = useRef(null);
-
-  const getDateTime = () => {
-    let tempDate = new Date();
-    let date =
-      tempDate.getFullYear() +
-      "-" +
-      ("0" + (tempDate.getMonth() + 1)).slice(-2) +
-      "-" +
-      ("0" + tempDate.getDate()).slice(-2);
-    const currDate = date;
-    return currDate;
-  };
-
-  const [task, setTask] = useState({ priority: "Low", date: getDateTime() });
+  const TITLE_LIMIT = 30
+  const DESCRIPTION_LIMIT = 150
+  const [showForm, setShowForm] = useState(false)
+  const [task, setTask] = useState({name:'', description:'', priority: "Low" });
 
   const [sendEditTask, setSendEditTask] = useState(false);
 
@@ -27,150 +16,126 @@ const CreateTasks = ({ sendForm, setEdit, edit, taskEdit }) => {
     if (taskEdit.task) {
       setTask(taskEdit.task);
       setSendEditTask(true);
-      if (window.innerWidth <= 769) {
-        showCreateTask(true);
-      }
+      setShowForm(true)
     } else {
       setSendEditTask(false);
     }
   }, [taskEdit]);
 
-  const [minDate] = useState(getDateTime());
+ 
 
-  const showCreateTask = (show) => {
-    if (show === true && taskBefore.current && taskCreate.current) {
-      taskBefore.current.style.opacity = "1";
-      taskBefore.current.style.visibility = "visible";
-      taskCreate.current.style.opacity = "1";
-      taskCreate.current.style.visibility = "visible";
+  const showCreateTask = () => {
+    if (showForm === true) {
+      return setShowForm(false)
     }
+    setShowForm(true)
 
-    if (show === false && taskBefore.current && taskCreate.current) {
-      taskBefore.current.style.opacity = "0";
-      taskBefore.current.style.visibility = "hidden";
-      taskCreate.current.style.opacity = "0";
-      taskCreate.current.style.visibility = "hidden";
-    }
   };
 
-  const showMobile = (show) => {
-    if (show === true && taskCreate.current) {
-      taskCreate.current.style.opacity = "1";
-      taskCreate.current.style.visibility = "visible";
-    }
-  };
+
 
   const handleForm = (e) => {
     e.preventDefault();
-    if (window.innerWidth <= 769) {
-      showCreateTask(false);
-    }
     if (sendEditTask) {
       edit(task, taskEdit.index);
     } else {
-      sendForm(task);
+      sendForm({...task,id:window.crypto.randomUUID()});
     }
     setSendEditTask(false);
-    setTask({ priority: "Low", date: getDateTime() });
+    showCreateTask(false);
+    setTask({name:'', description:'', priority: "Low" });
     inputName.current.focus();
   };
 
-  window.addEventListener("resize", () => {
-    if (window.innerWidth <= 769 && onMobile === true) {
-      onMobile = false;
-      showCreateTask(false);
-    }
 
-    if (window.innerWidth >= 769 && onMobile === false) {
-      onMobile = true;
-      showMobile(true);
-    }
-  });
 
-  return (
-    <React.Fragment>
-      <i
+  return(
+    <>
+    <button onClick={()=>{showCreateTask()}} type="button" className="fixed bottom-3 right-3 rounded-lg bg-[#5650a3] transition-all duration-300 hover:bg-[#312d63] min-h-[36px] min-w-[36px] flex justify-center items-center z-10">
+      <AddIcon/>
+    </button>
+
+
+    <div className={`task-create absolute top-0 bottom-0 left-0 right-0 transition-all duration-300 w-full h-[100vh] p-3 bg-[#0a0a0a5c] flex justify-center items-center -z-10 ${showForm ? 'opacity-100 z-30' : 'opacity-0 -z-10'}`}>
+      <div className="w-full h-[420px] bg-[#feeafa] max-w-[370px]">
+      <button
         onClick={(e) => {
-          showCreateTask(true);
-          setTask({ priority: "Low", date: getDateTime() });
+          showCreateTask(false);
           setSendEditTask(false);
+          setTask({name:'', description:'', priority: "Low" });
         }}
-        className="fas fa-plus"
-      ></i>
+        type="button"
+        className="min-w-[30px] min-h-[30px] rounded-sm transition-all duration-300 bg-[#5650a3]  flex items-center justify-center m-auto mr-0 outline-none hover:bg-[#312d63]"
+      >
+        <CloseIcon width={24} height={24}/>
+      </button>
 
-      <div ref={taskBefore} className="task-before"></div>
 
-      <div ref={taskCreate} className="task-create">
-        <i
-          onClick={(e) => {
-            showCreateTask(false);
-            setSendEditTask(false);
-            setTask({ priority: "Low", date: getDateTime() });
-          }}
-          className="fas fa-times-circle"
-        ></i>
+      <form onSubmit={handleForm} className="mt-3 px-5">
+        <h2 className="w-full text-center font-semibold text-[20px] text-[#53336b]" style={{textTransform:'capitalize'}}>{sendEditTask === true ? "Edit the task" : "Create the task"}</h2>
 
-        <h2 style={{textTransform:'capitalize'}}>{sendEditTask === true ? "Edit the task" : "Create the task"}</h2>
-
-        <form onSubmit={handleForm}>
-          <div>
-            <label>Name of the Task</label>
-            <input
-              type="text"
-              ref={inputName}
-              name="name"
-              onChange={(e) => setTask({ ...task, name: e.target.value })}
-              value={task.name || ""}
-              autoComplete="off"
-              required
-            />
+        <div className="mt-3">
+          <label htmlFor="name" className="block text-[#0f0e2b] text-md font-semibold mb-1 text-[14px]">Name of the Task</label>
+          <input
+            type="text"
+            ref={inputName}
+            name="name"
+            className="appearance-none  border border-[#c2c0e7] hover:border-[#261f7f] focus:border-[#261f7f]  transition-all duration-300 rounded w-full py-1 px-1 text-gray-700 mb-3 leading-tight focus:outline-none outline-none"
+            onChange={(e) => e.target.value.length < TITLE_LIMIT + 1 ? setTask({ ...task, name: e.target.value }) : ''}
+            value={task.name || ""}
+            autoComplete="off"
+            required
+          />
+          <div className="w-full flex justify-end items-center">
+            <span className="text-[14px]"><span>{task.name.length}</span>/{TITLE_LIMIT}</span>
           </div>
-          <div>
-            <label>Description for the task</label>
-            <textarea
-              name="description"
-              onChange={(e) =>
-                setTask({ ...task, description: e.target.value })
-              }
-              value={task.description || ""}
-              autoComplete="off"
-              required
-            ></textarea>
-          </div>
-          <div>
-            <label>Time to finish the task</label>
-            <input
-              type="date"
-              min={minDate}
-              value={task.date || ""}
-              name="date"
-              onChange={(e) => setTask({ ...task, date: e.target.value })}
-              required
-            />
-          </div>
+        </div>
+        <div>
+          <label htmlFor="description" className="block text-[#0f0e2b] text-md font-semibold mb-1 text-[14px]">Description for the task</label>
+          <textarea
+            name="description"
+            className="appearance-none border border-[#c2c0e7] hover:border-[#261f7f] focus:border-[#261f7f] outline-none transition-all duration-300 rounded w-full py-1 px-1 text-[15px] resize-none h-[60px] text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            onChange={(e) =>
+              e.target.value.length < DESCRIPTION_LIMIT + 1 ? setTask({ ...task, description: e.target.value }) : ''
+            }
+            value={task.description || ""}
+            autoComplete="off"
+            required
+          ></textarea>
+          <div className="w-full flex justify-end items-center">
+          <span className="text-[14px]"><span>{task.description.length}</span>/{DESCRIPTION_LIMIT}</span>
 
-          <div>
-            <label>Priority for the task</label>
-            <select
-              name="priority"
-              onChange={(e) => setTask({ ...task, priority: e.target.value })}
-              value={task.priority || ""}
-            >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-            </select>
           </div>
+        </div>
 
-          <div className="form-content" style={{ alignItems: "center" }}>
-            <button type="submit">
-              {sendEditTask === true ? "Edit Task" : "Create Task"}
-            </button>
-          </div>
-        </form>
+        <div>
+          <label className="block text-[#0f0e2b] text-md font-semibold mb-1 text-[14px]">Priority for the task</label>
+          <select
+            name="priority"
+            className="block appearance-none w-full bg-white border border-[#3126bf]  hover:border-[#261f7f] outline-none transition-all duration-300  px-1 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            onChange={(e) => setTask({ ...task, priority: e.target.value })}
+            value={task.priority || ""}
+          >
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+
+        <div className="w-full flex justify-center items-center mt-3" style={{ alignItems: "center" }}>
+          <button type="submit" className="m-auto bg-transparent duration-300 hover:bg-[#5650a3] text-[#5650a3] font-semibold hover:text-white py-2 px-4 border border-[#5650a3] hover:border-transparent rounded">
+            {sendEditTask === true ? "Edit Task" : "Create Task"}
+          </button>
+        </div>
+      </form>
       </div>
-    </React.Fragment>
-  );
+    </div>
+    </>
+
+  )
+
+
+
 };
 
 const mapStateToProps = (state) => ({
