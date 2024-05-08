@@ -11,6 +11,6 @@ export default defineConfig(() => {
         open: true,
       },
     plugins: [react(),eslint(),svgr({ svgrOptions: { icon: true } })],
-    base:'http://rufi512.github.io/CRUD-React-Redux-LocalStorage'
+    base:'https://rufi512.github.io/CRUD-React-Redux-LocalStorage'
   };
 });

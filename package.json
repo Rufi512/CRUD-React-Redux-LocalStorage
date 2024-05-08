@@ -1,7 +1,7 @@
 {
   "name": "crud-react-redux-localstorage",
   "version": "0.1.0",
-  "homepage": "http://rufi512.github.io/CRUD-React-Redux-LocalStorage",
+  "homepage": "https://rufi512.github.io/CRUD-React-Redux-LocalStorage",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.5",
