@@ -36,16 +36,7 @@ const Tasks = ({ tasks, setEdit, reOrderTasks, remove, checkTask }) => {
     setOpenTask(id);
   };
 
-  if (tasks.length === 0) {
-    return (
-      <div className="w-full p-3" style={{ height: "100vh" }}>
-        <h1 className="text-center text-[2em] text-[#53336b] font-semibold tracking-wide">
-          ToDo List
-        </h1>
-        <p className="text-center">You don't have things to do for now!</p>
-      </div>
-    );
-  }
+
 
   const handleDragStart = (e, element) => {
     e.dataTransfer.setData("CardId", element.id);
@@ -72,11 +63,11 @@ const Tasks = ({ tasks, setEdit, reOrderTasks, remove, checkTask }) => {
   };
 
   return (
-    <div className="w-full p-3" style={{ height: "100vh" }}>
-      <h1 className="text-center text-[2em] text-[#53336b] font-semibold tracking-wide">
+    <div className="w-full min-h-[100vh] max-sm:pt-12 p-3">
+      <h1 className="text-center text-[2em] text-[#53336b] font-semibold tracking-wide dark:text-[#aaa5ed]">
         ToDo List
       </h1>
-      <p className="text-center">You have some things to do</p>
+      <p className="text-center dark:text-[#eff7ff]">{tasks.length > 0 ? "You have some things to do" : "You don't have things to do for now!"}</p>
       <div className=" mt-4 pb-14 lg:flex flex-row w-full gap-3 justify-center">
         {priorityTasks.map((elm, i) => {
           return (
@@ -84,13 +75,13 @@ const Tasks = ({ tasks, setEdit, reOrderTasks, remove, checkTask }) => {
               <AnimatePresence>
                 <motion.div
                   layout
-                  className="mt-4 w-full bg-[#e4dbfb] shadow-[0_2px_3px_0px_#ddc9d9] p-[10px] lg:min-w-[300px]"
+                  className="mt-4 w-full bg-[#e4dbfb] shadow-[0_2px_3px_0px_#ddc9d9] dark:shadow-[0_2px_3px_0px_#2b2b4133]  p-[10px] lg:min-w-[300px] dark:bg-[#2f2f53]"
                 >
                   <div className="w-full flex justify-between items-center mb-0">
-                    <h2 className="text-[#000] text-[16px] font-semibold capitalize tracking-wide">
+                    <h2 className="text-[#000] text-[16px] font-semibold capitalize tracking-wide dark:text-white">
                       {elm} priority
                     </h2>
-                    <PinIcon width={22} height={22} />
+                    <PinIcon width={22} height={22} className="fill-[#000] dark:fill-[#fff]" />
                   </div>
 
                   <div className="mt-1 flex flex-col  w-full">
@@ -141,7 +132,7 @@ const Tasks = ({ tasks, setEdit, reOrderTasks, remove, checkTask }) => {
                                   checked: task.checked,
                                 });
                               }}
-                              className="w-full cursor-pointer  bg-[#d5d2ff] transition-all duration-300 items-center flex flex-col relative rounded"
+                              className="w-full cursor-pointer  bg-[#d5d2ff] dark:bg-[#bfbcea] transition-all duration-300 items-center flex flex-col relative rounded"
                               key={task.id}
                             >
                               <div className="w-full px-2  transition-all duration-300  ">

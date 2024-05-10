@@ -61,8 +61,7 @@ const reducerTask = (state = initialState, action) => {
 
 	if (action.type === "DELETE_TASK") {
 		const filtered = state.tasks.filter(el=> el.id !== action.id);
-		console.log(action.id)
-		console.log(filtered)
+
 		return {
 			...state,
 			tasks: filtered,
@@ -70,7 +69,6 @@ const reducerTask = (state = initialState, action) => {
 	}
 
 	if (action.type === "SET_CHECKED_TASK") {
-		console.log(action)
 		const list = state.tasks.map((el)=>{
 			if(action.task.id === el.id){
 				return {...el,checked:action.task.checked}
